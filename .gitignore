@@ -1,0 +1,5 @@
+.bundle
+.env
+bin
+public/assets
+*.sqlite3*

@@ -1,0 +1,7 @@
+h1 "you've got mail!"
+
+if ENV["RACK_ENV"] == "development"
+  a href: session_path(@user) do
+    "[development] login"
+  end
+end
