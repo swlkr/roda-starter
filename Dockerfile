@@ -26,4 +26,4 @@ RUN bundle install
 
 COPY --chown=$USER . /var/app
 
-CMD ["sh", "-c", "rerun --force-polling -- rackup -o 0.0.0.0"]
+CMD ["rerun", "--force-polling", "--", "rackup", "-o", "0.0.0.0"]
