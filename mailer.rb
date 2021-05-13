@@ -5,24 +5,29 @@ class Mailer < Roda
   plugin :mailer, content_type: "text/html"
   plugin :symbol_views
   plugin :render, engine: "mab", layout: "email_layout"
+  plugin :environments
+  plugin :delegate
+  request_delegate :mail
 
-  Mail.defaults do
-    if ENV["RACK_ENV"] != "production"
-      delivery_method :logger
-    else
+  if production?
+    Mail.defaults do
       delivery_method :smtp,
         address: "smtp.mailgun.org",
         user_name: "postmaster@your_project.com",
         password: ENV["SMTP_PASSWORD"],
         port: 587
     end
+  else
+    Mail.defaults do
+      delivery_method :logger
+    end
   end
 
   route do |r|
     from "You <you@your_project.com>"
 
-    r.mail "signup", Integer do |id|
-      no_mail! unless @user = User[id]
+    mail "signup", Integer do |id|
+      no_mail! unless @user = User.first(id: id)
 
       @link = "https://your_project.com/login/#{@user.token}"
 
