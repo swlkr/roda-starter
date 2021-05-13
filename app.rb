@@ -13,13 +13,14 @@ class App < Roda
   plugin :route_csrf
   plugin :symbol_views
   plugin :slash_path_empty
+  plugin :environments
 
   plugin :assets,
     css: ["app.css"],
     js: [],
     gzip: true
 
-  compile_assets unless ENV["RACK_ENV"] == "development"
+  compile_assets unless development?
 
   plugin :not_found do
     view "404"
@@ -139,7 +140,7 @@ class App < Roda
       @user = nil
 
       if ENV["RACK_ENV"] == "development"
-        @user = User.order(Sequel.desc(:created_at)).first
+        @user = User.where(Sequel.lit("token is not null and token_expires_at > ?", Time.now.to_i)).first
       end
 
       :got_mail
