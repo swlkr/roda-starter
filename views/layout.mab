@@ -19,16 +19,16 @@ html5 lang: "en" do
     if @current_user
       form method: "post", action: logout_path do
         div { csrf_tag(logout_path) }
-        input class: "link", type: "submit", value: "Logout"
+        input type: "submit", value: "Logout"
       end
-    end
+    else
+      a href: login_path do
+        "login"
+      end
 
-    a class: "link", href: login_path do
-      "login"
-    end
-
-    a class: "button bg-indigo-500 text-white", href: signup_path do
-      "sign up"
+      a href: signup_path do
+        "sign up"
+      end
     end
 
     yield

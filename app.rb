@@ -14,6 +14,15 @@ class App < Roda
   plugin :symbol_views
   plugin :slash_path_empty
   plugin :environments
+  plugin :delegate
+  plugin :disallow_file_uploads # use direct uploads from client instead
+  plugin :precompile_templates
+
+  # precompile templates
+  precompile_views %w[home signup login got_mail layout]
+
+  # don't call r. everywhere
+  request_delegate :root, :on, :is, :get, :post, :redirect, :assets, :params, :halt
 
   plugin :assets,
     css: ["app.css"],
@@ -57,28 +66,28 @@ class App < Roda
   path :logout, "/logout"
 
   route do |r|
-    r.assets if ENV["RACK_ENV"] == "development"
+    assets if self.class.development?
     check_csrf!
 
     # CURRENT_USER
-    @current_user = User.first(id: r.session["user_id"])
+    @current_user = User.first(id: session["user_id"])
 
     # HOME
-    r.root do
+    root do
       :home
     end
 
     # SIGNUP
-    r.is "signup" do
+    is "signup" do
       # GET /signup
-      r.get do
+      get do
         :signup
       end
 
       # POST /signup
-      r.post do
-        @user = User.first(email: r.params["email"]) || User.new
-        @user.email = r.params["email"]
+      post do
+        @user = User.first(email: params["email"]) || User.new
+        @user.email = params["email"]
         @user.refresh_token
 
         if @user.valid?
@@ -87,7 +96,7 @@ class App < Roda
           # send signup email
           MailJob.perform_async("/signup/#{@user.id}")
 
-          r.redirect got_mail_path
+          redirect got_mail_path
         else
           :signup
         end
@@ -95,16 +104,16 @@ class App < Roda
     end
 
     # LOGIN
-    r.on "login" do
-      r.is do
+    on "login" do
+      is do
         # GET /login
-        r.get do
+        get do
           :login
         end
 
         # POST /login
-        r.post do
-          @user = User.first(email: r.params["email"])
+        post do
+          @user = User.first(email: params["email"])
 
           if @user
             @user.refresh_token
@@ -113,33 +122,34 @@ class App < Roda
             MailJob.perform_async "/signup/#{@user.id}"
           end
 
-          r.redirect got_mail_path
+          redirect got_mail_path
         end
       end
 
-      r.is String do |token|
+      is String do |token|
         # GET /logins/:token
-        r.get do
+        get do
           @user = User.where(Sequel.lit("token = ? and token_expires_at > ?", token, Time.now.to_i)).first
 
           if @user
             @user.clear_token
             @user.save
-            r.session['user_id'] = @user.id
-            r.redirect home_path
+            session["user_id"] = @user.id
+            redirect home_path
           else
             response.status = 404
-            r.halt
+            halt
           end
         end
       end
     end
 
     # GOT MAIL
-    r.is "got-mail" do
+    is "got-mail" do
       @user = nil
+      @development = self.class.development?
 
-      if ENV["RACK_ENV"] == "development"
+      if @development
         @user = User.where(Sequel.lit("token is not null and token_expires_at > ?", Time.now.to_i)).first
       end
 
@@ -147,18 +157,20 @@ class App < Roda
     end
 
     # LOGOUT
-    r.is "logout" do
+    is "logout" do
       # POST /logout
-      r.post do
-        session.delete('user_id')
-        r.redirect home_path
+      post do
+        @current_user.clear_token
+        @current_user.save
+        session.delete("user_id")
+        redirect home_path
       end
     end
 
     # CHECK FOR CURRENT_USER
     unless @current_user
       response.status = 404
-      r.halt
+      halt
     end
 
     # PROTECTED ROUTES
