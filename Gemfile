@@ -11,7 +11,6 @@ gem "sequel-hash_id"
 gem "sqlite3"
 gem "pry"
 gem "mail"
-gem "haikunator"
 gem "sucker_punch"
 gem "rake"
 
