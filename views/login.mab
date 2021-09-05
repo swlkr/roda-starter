@@ -1,10 +1,10 @@
-h1 "login"
+h1 'login'
 
-form method: "post", action: login_path do
+form method: 'post', action: login_path do
   div { csrf_tag login_path }
 
-  label for: "email" do "Enter your email to get your login link" end
-  input type: "email", name: "email", autofocus: true, placeholder: "you@email.com"
+  label for: 'email' do 'Enter your email to get your login link' end
+  input type: 'email', name: 'email', autofocus: true, placeholder: 'you@email.com'
 
-  input type: "submit", value: "login"
+  input type: 'submit', value: 'login'
 end

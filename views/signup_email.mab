@@ -1,9 +1,0 @@
-p "Welcome to your_project!"
-
-a href: @link do
-  "Follow this link to sign in"
-end
-
-p "or if you're having trouble with the link, copy and paste this link in your browser"
-
-p do @link end

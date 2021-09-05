@@ -1,7 +1,7 @@
-h1 "you've got mail!"
+h1 'you\'ve got mail!'
 
 if @development
   a href: session_path(@user) do
-    "[development] login"
+    '[development] login'
   end
 end
