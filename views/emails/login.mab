@@ -1,4 +1,4 @@
-p 'Welcome to your_project!'
+p 'Welcome back to your_project!'
 
 a href: @link do
   'Follow this link to sign in'
