@@ -1,7 +1,10 @@
 require 'sequel'
+require 'logger'
 
 # DATABASE
 DB = Sequel.connect ENV.fetch('DATABASE_URL')
+
+DB.loggers << Logger.new($stdout)
 
 # set pragma stuff
 DB.run 'PRAGMA busy_timeout=5000;'
