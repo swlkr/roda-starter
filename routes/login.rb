@@ -12,9 +12,9 @@ class App
   end
 
   def get_session(code)
-    @code = LoginCode.where(code: code).exclude { expired_at <= Time.now.to_i }.first
+    @code = LoginCode.where(code: code).first
 
-    if @code
+    if @code && @code.expired_at <= Time.now.to_i
       session['user_id'] = @code.user_id
       redirect home_path
     else
