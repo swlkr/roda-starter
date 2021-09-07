@@ -26,4 +26,4 @@ RUN bundle install
 
 COPY --chown=$USER . /var/app
 
-CMD ["rerun", "--force-polling", "--", "rackup", "-o", "0.0.0.0"]
+CMD ["rerun", "--pattern", "{*.rb,*.mab,*.ru}", "--force-polling", "--", "puma", "config.ru"]
