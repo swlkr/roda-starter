@@ -1,3 +1,3 @@
-require './app'
+require './roda_starter'
 
-run App
+run RodaStarter

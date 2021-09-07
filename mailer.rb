@@ -1,7 +1,6 @@
-require './shared'
-require './models'
+require './app'
 
-class Mailer < Shared
+class Mailer < App
   plugin :mailer, content_type: 'text/html'
   plugin :render, engine: 'mab', layout: './emails/layout'
 
@@ -22,22 +21,21 @@ class Mailer < Shared
     end
   end
 
+  Dir[File.join(__dir__, "mailers", "*.rb")].each do |file|
+    require file
+  end
+
   route do
     set_view_subdir 'emails'
 
     from 'You <you@your_project.com>'
 
     mail 'signup', Integer do |id|
-      @user = User.first(id: id)
+      signup User[id]
+    end
 
-      no_mail! unless @user
-
-      @link = "https://your_project.com/login/#{@user.token}"
-
-      to @user.email
-      subject '[your_project] Your login link to sign in is inside'
-
-      view 'signup'
+    mail 'login', Integer do |id|
+      login User[id]
     end
   end
 end
