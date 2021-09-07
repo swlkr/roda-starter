@@ -4,15 +4,14 @@ class App
   end
 
   def post_signup
-    @user = User.first(email: params['email']) || User.new
-    @user.email = params['email']
-    @user.refresh_token
+    @user = User.first(user_params) || User.new(user_params)
 
     if @user.valid?
-      @user.save
+      # only save user if user is new
+      @user.save if @user.new?
 
-      # send signup email
-      MailJob.perform_async("/signup/#{@user.id}")
+      # create a new login code and send it in an email
+      LoginCodeJob.perform_async @user.id, signup_email_path(@user)
 
       redirect got_mail_path
     else
@@ -28,5 +27,11 @@ class App
     post do
       post_signup
     end
+  end
+
+  private
+
+  def user_params
+    params.slice 'email'
   end
 end

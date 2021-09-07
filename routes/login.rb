@@ -6,23 +6,16 @@ class App
   def post_login
     @user = User.first(email: params['email'])
 
-    if @user
-      @user.refresh_token
-      @user.save
-
-      MailJob.perform_async "/signup/#{@user.id}"
-    end
+    LoginCodeJob.perform_async(@user, login_email_path(@user)) if @user
 
     redirect got_mail_path
   end
 
-  def get_session(token)
-    @user = User.where(Sequel.lit('token = ? and token_expires_at > ?', token, Time.now.to_i)).first
+  def get_session(code)
+    @code = LoginCode.where(code: code).exclude { expired_at <= Time.now.to_i }.first
 
-    if @user
-      @user.clear_token
-      @user.save
-      session['user_id'] = @user.id
+    if @code
+      session['user_id'] = @code.user_id
       redirect home_path
     else
       response.status = 404
@@ -41,10 +34,10 @@ class App
       end
     end
 
-    is String do |token|
-      # GET /login/:token
+    is String do |code|
+      # GET /login/:code
       get do
-        get_session(token)
+        get_session(code)
       end
     end
   end

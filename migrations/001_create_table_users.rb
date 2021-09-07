@@ -4,8 +4,6 @@ Sequel.migration do
       primary_key :id
       String :name
       String :email, unique: true, null: false
-      String :token
-      Integer :token_expires_at
       Integer :updated_at
       Integer :created_at
     end
