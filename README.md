@@ -6,21 +6,22 @@ It has:
 
 - A locked down CSP (everything served from same domain)
 - Asset compilation in production
-- A docker and docker compose file
-- A .env file for docker to set env variables
+- A Containerfile for containers
+- A .env file for podman to set env variables
 - [Sequel](http://sequel.jeremyevans.net) with model plugin
 - [Markaby](https://markaby.github.io) templates
 - Example email auth with a migration, model, a mailer and a background job ([sucker_punch](https://github.com/brandonhilkert/sucker_punch)) for that mailer
+- Sqlite is the database used in development and production
 
-## Install docker
+## Install podman
 
-I use docker in anger, apologies.
+Go ahead and install podman if you don't have it already:
 
-Go ahead and install docker if you don't have it already:
-
-[https://docs.docker.com/docker-for-mac/install/](https://docs.docker.com/docker-for-mac/install/)
+[https://podman.io/getting-started/installation](https://podman.io/getting-started/installation)
 
 ## Clone the repo
+
+You also might want to rename `roda_starter.rb` to your project name as well
 
 ```sh
 git clone https://github.com/swlkr/roda-starter ~/Projects/your_project
@@ -30,23 +31,33 @@ cp .env.example .env
 
 ## Start it up
 
+This is a two step process:
+
+1. Build the container
+
 ```sh
-docker compose up # listening on http://localhost:9292
+podman build -t orgchartapp .
+```
+
+2. Start the container
+
+```sh
+podman run --rm -it --env-file .env --volume $(pwd):/var/app --publish 9292:9292 orgchartapp # listening on http://localhost:9292
 ```
 
 Everything happens on start up because I hate running rake tasks on every deploy:
 
-1. Docker runs bundle install (cached)
+1. podman runs bundle install
 2. `models.rb` runs migrations on startup
 3. `app.rb` runs `compile_assets` in production on startup
 
-Head over to localhost:9292 and check it out!
+Head over to http://localhost:9292 and check it out!
 
 You should be able to sign up, login and logout via email (magic link) auth.
 
 ## Deploy
 
-I use [dokku](https://dokku.com) to deploy and it should "just work" with a docker volume for sqlite and a change to the nginx config for serving production assets:
+I use [dokku](https://dokku.com) to deploy and it should "just work" with a volume for sqlite and a change to the nginx config for serving production assets:
 
 ```sh
 # make sure you are in the project directory

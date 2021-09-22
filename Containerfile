@@ -1,4 +1,4 @@
-FROM ruby:3.0.1-slim-buster
+FROM docker.io/library/ruby:slim
 
 RUN apt-get update -qq && apt-get install -y build-essential libsqlite3-dev
 
