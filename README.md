@@ -36,13 +36,13 @@ This is a two step process:
 1. Build the container
 
 ```sh
-podman build -t orgchartapp .
+podman build -t your_project .
 ```
 
 2. Start the container
 
 ```sh
-podman run --rm -it --env-file .env --volume $(pwd):/var/app --publish 9292:9292 orgchartapp # listening on http://localhost:9292
+podman run --rm -it --env-file .env --volume $(pwd):/var/app --publish 9292:9292 your_project # listening on http://localhost:9292
 ```
 
 Everything happens on start up because I hate running rake tasks on every deploy:
