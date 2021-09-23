@@ -8,8 +8,8 @@ It has:
 - Asset compilation in production
 - A Containerfile for containers
 - A .env file for podman to set env variables
-- [Sequel](http://sequel.jeremyevans.net) with model plugin
-- [Markaby](https://markaby.github.io) templates
+- [sequel](http://sequel.jeremyevans.net) with model plugin
+- [erubi](https://github.com/jeremyevans/erubi) templates with automatic escaping `<%== %>` to unescape
 - Example email auth with a migration, model, a mailer and a background job ([sucker_punch](https://github.com/brandonhilkert/sucker_punch)) for that mailer
 - Sqlite is the database used in development and production
 
@@ -49,7 +49,7 @@ Everything happens on start up because I hate running rake tasks on every deploy
 
 1. podman runs bundle install
 2. `models.rb` runs migrations on startup
-3. `app.rb` runs `compile_assets` in production on startup
+3. `web.rb` runs `compile_assets` in production on startup
 
 Head over to http://localhost:9292 and check it out!
 
@@ -77,6 +77,4 @@ location /assets/ {
 }
 ```
 
-And that should be it, the Procfile should get picked up by dokku and it also gives you a handy pry console with `dokku run console`!
-
-Now go make something people want!
+And that should be it, the Procfile should get picked up by dokku and it also gives you a handy pry console with `dokku run console`
