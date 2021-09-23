@@ -1,0 +1,12 @@
+<nav class="hstack">
+  <a href="<%= home_path %>">your project</a>
+
+  <% if @current_user %>
+    <% form action: logout_path, method: 'post' do |f| %>
+      <%== f.button value: 'Logout', class: 'link' %>
+    <% end %>
+  <% else %>
+    <a href="<%= login_path %>">login</a>
+    <a href="<%= signup_path %>">signup</a>
+<% end %>
+</nav>

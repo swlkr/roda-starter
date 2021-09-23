@@ -1,4 +1,4 @@
-class App
+class Web
   def get_signup
     view 'signup'
   end
@@ -6,17 +6,13 @@ class App
   def post_signup
     @user = User.first(user_params) || User.new(user_params)
 
-    if @user.valid?
-      # only save user if user is new
+    if @user&.valid?
       @user.save if @user.new?
 
-      # create a new login code and send it in an email
-      LoginCodeJob.perform_async @user.id, signup_email_path(@user)
-
-      redirect got_mail_path
-    else
-      view 'signup'
+      CreateLoginCodeJob.perform_async @user, signup_email_path(@user)
     end
+
+    redirect got_mail_path
   end
 
   hash_routes.on 'signup' do

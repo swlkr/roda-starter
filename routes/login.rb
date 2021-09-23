@@ -1,20 +1,22 @@
-class App
+class Web
   def get_login
     view 'login'
   end
 
   def post_login
-    @user = User.first(email: params['email'])
+    email = params['email']
 
-    LoginCodeJob.perform_async(@user, login_email_path(@user)) if @user
+    @user = User.first(email: email)
+
+    CreateLoginCodeJob.perform_async(@user, login_email_path(@user)) if @user
 
     redirect got_mail_path
   end
 
   def get_session(code)
-    @code = LoginCode.where(code: code).first
+    @code = LoginCode.first(code: code)
 
-    if @code && @code.expired_at <= Time.now.to_i
+    if @code && @code.expired_at >= Time.now.to_i
       session['user_id'] = @code.user_id
       redirect home_path
     else

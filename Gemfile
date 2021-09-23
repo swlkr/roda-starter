@@ -9,10 +9,7 @@ gem 'puma'
 # database ORM
 gem 'sequel'
 
-# html as ruby
-gem 'markaby'
-
-# connects markaby to roda
+# views
 gem 'tilt'
 
 # don't expose integer ids in urls
@@ -31,6 +28,17 @@ gem 'mail'
 
 # background jobs
 gem 'sucker_punch'
+
+# needed for escape: true in render
+# auto html escaping
+# use <%== %> to unescape
+gem 'erubi'
+
+# html forms
+gem 'forme'
+
+# better logging
+gem 'roda-enhanced_logger'
 
 group :development do
   # reload web server on file change

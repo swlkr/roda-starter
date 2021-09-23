@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport", content: "width=device-width, initial-scale=1" />
+
+    <title>your project</title>
+
+    <% assets_paths(:css).each do |href| %>
+      <link href="<%= href %>" rel="stylesheet" />
+    <% end %>
+
+    <% assets_paths(:js).each do |src| %>
+      <script src="<%= src %>" defer type="module"></script>
+    <% end %>
+  </head>
+
+  <body>
+    <header>
+      <%== partial './nav' %>
+    </header>
+
+    <main>
+      <%== yield %>
+    </main>
+  </body>
+</html>

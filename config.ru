@@ -1,3 +1,3 @@
-require './roda_starter'
+require './web'
 
-run RodaStarter
+run Web

@@ -1,10 +1,10 @@
-class App
+class Web
   def get_got_mail
     @user = nil
     @development = development?
 
     if @development
-      @user = User.where(Sequel.lit('token is not null and token_expires_at > ?', Time.now.to_i)).first
+      @user = LoginCode.order(:id).last.user
     end
 
     view 'got_mail'

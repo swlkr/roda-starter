@@ -1,0 +1,13 @@
+<h1 class="text-center">login</h1>
+
+<div class="center">
+  <div class="card">
+    <% form action: login_path, method: 'post' do |f| %>
+      <div>
+        <label for="email">Enter your email</label>
+        <%== f.input :email, name: 'email', autofocus: true, placeholder: 'email@example.com' %>
+      </div>
+      <%== f.button value: 'login' %>
+    <% end %>
+  </div>
+</div>

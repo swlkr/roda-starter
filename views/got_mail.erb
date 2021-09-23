@@ -1,0 +1,7 @@
+<h1>You've got mail!</h1>
+
+<% if @development %>
+  <a href="<%== session_path(@user) %>">
+    [development] login
+  </a>
+<% end %>

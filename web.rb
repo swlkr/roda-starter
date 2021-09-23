@@ -3,15 +3,17 @@ require './models'
 require './mailer'
 require './jobs'
 
-class RodaStarter < App
+class Web < App
   # PLUGINS
   plugin :flash
-  plugin :render, engine: 'mab', layout: './layout'
+  plugin :render, escape: true, layout: './layout'
   plugin :sessions, secret: ENV.fetch('SESSION_SECRET'), cookie_options: { max_age: 86_400 * 30 }
   plugin :route_csrf
   plugin :slash_path_empty
   plugin :disallow_file_uploads # use direct uploads from client instead
   plugin :precompile_templates
+  plugin :forme_route_csrf
+  plugin :partials
 
   plugin :assets, {
     css: %w[
@@ -50,10 +52,24 @@ class RodaStarter < App
     csp.block_all_mixed_content
   end
 
-  # don't call r. everywhere
-  request_delegate :root, :on, :is, :get, :post, :redirect, :assets, :params, :halt
+  if development?
+    plugin :exception_page
+    plugin :error_handler do |e|
+      next exception_page(e)
+    end
+
+    class RodaRequest
+      def assets
+        exception_page_assets
+        super
+      end
+    end
+  end
 
   compile_assets unless development?
+
+  # don't call r. everywhere
+  request_delegate :root, :on, :is, :get, :post, :redirect, :params, :halt, :hash_routes, :assets
 
   Dir[File.join(__dir__, "routes", "*.rb")].each do |file|
     require file
@@ -63,17 +79,7 @@ class RodaStarter < App
     assets if development?
     check_csrf!
 
-    # CURRENT_USER
     @current_user = User.first(id: session['user_id'])
-
-    # HOME
-    root do
-      if @current_user
-        view 'home'
-      else
-        redirect login_path
-      end
-    end
 
     def current_user!
       return if @current_user

@@ -1,7 +1,3 @@
-:root {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-}
-
 html, body {
   font-family: var(--font-sans);
 }
@@ -12,5 +8,68 @@ html {
 
 body {
   min-height: 100%;
+  font-size: var(--scale-1);
+}
+
+form > * {
+  margin-bottom: var(--size-4);
+  font-size: var(--scale-1);
+}
+
+form > *:last-child {
+  margin-bottom: 0;
+}
+
+form label {
+  margin-bottom: var(--size-1);
+}
+
+input[type="email"], input[type="text"] {
+  border: solid 1px var(--color-grey-500);
+  padding: var(--size-2);
+  border-radius: var(--radius-md);
+  font-size: var(--scale-1);
+}
+
+input[type="submit"] {
+  border-radius: var(--radius-md);
+  padding: var(--size-2);
+  background-color: var(--color-indigo-500);
+  color: white;
+  box-shadow: var(--elevation-2);
+  width: var(--size-full);
+  font-size: var(--scale-1);
+}
+
+.card {
+  padding: var(--size-4);
+  background-color: white;
+  box-shadow: var(--elevation-2);
+  border-radius: var(--radius-md);
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+main {
+  background-color: var(--color-grey-300);
+  height: 100vh;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.link, input[type="submit"].link {
+  cursor: pointer;
+  text-decoration: underline;
+  display: block;
+  width: fit-content;
+  padding: 0;
+  background-color: transparent;
+  color: inherit;
   font-size: var(--scale-1);
 }

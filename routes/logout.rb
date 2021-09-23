@@ -1,4 +1,4 @@
-class App
+class Web
   def post_logout
     session.delete('user_id')
 
