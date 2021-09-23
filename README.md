@@ -77,4 +77,10 @@ location /assets/ {
 }
 ```
 
+You also need to set the config values:
+
+```sh
+dokku config:set DATATABASE_URL=sqlite:///storage/your_project.sqlite3 RACK_ENV=production SESSION_SECRET=your session secret
+```
+
 And that should be it, the Procfile should get picked up by dokku and it also gives you a handy pry console with `dokku run console`
