@@ -1,6 +1,6 @@
-require './app'
+require './roda_app'
 
-class Mailer < App
+class Mailer < RodaApp
   plugin :mailer, content_type: 'text/html'
   plugin :render, escape: true, layout: './emails/layout'
 

@@ -1,3 +1,3 @@
-require './web'
+require './app'
 
-run Web
+run App
