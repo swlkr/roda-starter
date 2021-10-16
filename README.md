@@ -6,7 +6,7 @@ It has:
 
 - A locked down CSP (everything served from same domain)
 - Asset compilation in production
-- A Containerfile for containers
+- A Dockerfile for containers
 - A .env file for podman to set env variables
 - [sequel](http://sequel.jeremyevans.net) with model plugin
 - [erubi](https://github.com/jeremyevans/erubi) templates with automatic escaping `<%== %>` to unescape
@@ -20,8 +20,6 @@ Go ahead and install podman if you don't have it already:
 [https://podman.io/getting-started/installation](https://podman.io/getting-started/installation)
 
 ## Clone the repo
-
-You also might want to rename `roda_starter.rb` to your project name as well
 
 ```sh
 git clone https://github.com/swlkr/roda-starter ~/Projects/your_project
@@ -49,7 +47,7 @@ Everything happens on start up because I hate running rake tasks on every deploy
 
 1. podman runs bundle install
 2. `models.rb` runs migrations on startup
-3. `web.rb` runs `compile_assets` in production on startup
+3. `app.rb` runs `compile_assets` in production on startup
 
 Head over to http://localhost:9292 and check it out!
 
@@ -63,9 +61,9 @@ I use [dokku](https://dokku.com) to deploy and it should "just work" with a volu
 # make sure you are in the project directory
 cd your_project
 # mount for sqlite
-dokku storage:mount /var/lib/dokku/data/storage/db:/storage # make sure that `your_project` folder exists on the server
+dokku storage:mount /var/lib/dokku/data/storage/your_project/private:/private # make sure that `your_project/private` folder exists on the server
 # mount for compiled assets
-dokku storage:mount /var/lib/dokku/data/storage/your_project:/var/app/public # make sure that `your_project` folder exists on the server
+dokku storage:mount /var/lib/dokku/data/storage/your_project/public:/var/app/public # make sure that `your_project/public` folder exists on the server
 ```
 
 Here's what you need for the nginx config
@@ -73,14 +71,14 @@ Here's what you need for the nginx config
 ```sh
 # add this to your nginx config
 location /assets/ {
-  alias /var/lib/dokku/data/storage/your_project/assets/;
+  alias /var/lib/dokku/data/storage/your_project/public/;
 }
 ```
 
 You also need to set the config values:
 
 ```sh
-dokku config:set DATATABASE_URL=sqlite:///storage/your_project.sqlite3 RACK_ENV=production SESSION_SECRET=your session secret
+dokku config:set DATATABASE_URL=sqlite:///your_project/private/your_project.sqlite3 RACK_ENV=production SESSION_SECRET=your session secret
 ```
 
 And that should be it, the Procfile should get picked up by dokku and it also gives you a handy pry console with `dokku run console`
