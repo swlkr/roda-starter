@@ -30,6 +30,7 @@ Model.plugin :string_stripper
 Model.plugin :association_proxies
 Model.plugin :hash_id, salt: ENV.fetch('HASH_ID_SALT').freeze, length: 7
 Model.plugin :validation_helpers
+Model.plugin :forme
 
 Dir[File.join(__dir__, 'models', '*.rb')].each do |file|
   require file
