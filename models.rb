@@ -32,6 +32,19 @@ Model.plugin :hash_id, salt: ENV.fetch('HASH_ID_SALT').freeze, length: 7
 Model.plugin :validation_helpers
 Model.plugin :forme
 
+class Model
+  class << self
+    def schema
+      meta_columns = %i[id updated_at created_at]
+      db_schema.reject { |k| meta_columns.include?(k) }
+    end
+
+    def fields
+      schema.keys.map(&:to_s)
+    end
+  end
+end
+
 Dir[File.join(__dir__, 'models', '*.rb')].each do |file|
   require file
 end
