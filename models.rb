@@ -18,6 +18,8 @@ Sequel::Migrator.run(DB, 'migrations')
 
 # MODELS
 Model = Class.new(Sequel::Model(DB))
+# set_fields doesn't set existing models' columns to nil
+Model.default_set_fields_options[:missing] = :skip
 Model.def_Model(self)
 
 Model.plugin :dataset_associations
